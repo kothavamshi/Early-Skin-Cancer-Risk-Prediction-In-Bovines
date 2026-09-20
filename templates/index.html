@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Skin Analyzer</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI';
+   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color:white;
+    text-align:center;
+}
+
+.container{
+    margin-top:60px;
+}
+
+.card{
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    width:380px;
+    margin:auto;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    animation: fadeIn 1s ease;
+}
+
+input,select{
+    width:90%;
+    padding:10px;
+    margin:8px;
+    border-radius:8px;
+    border:none;
+}
+
+button{
+    padding:12px;
+    width:90%;
+    background:#00c853;
+    border:none;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+button:hover{
+    background:#00e676;
+    transform:scale(1.05);
+}
+
+#preview{
+    width:160px;
+    margin-top:10px;
+    border-radius:10px;
+    display:none;
+}
+
+.upload-box{
+    border:2px dashed white;
+    padding:20px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
+.upload-box:hover{
+    background:rgba(255,255,255,0.1);
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+}
+</style>
+
+</head>
+
+<body onload="welcomeVoice()">
+
+<h1>🐄 Early Skin Cancer Risk Prediction In Bovines</h1>
+
+<div class="container">
+
+<div class="card">
+
+<form action="/predict" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+
+<div class="upload-box" onclick="document.getElementById('file').click()">
+    📤 Click or Drop Image
+    <input type="file" id="file" name="file" accept="image/*" hidden onchange="previewImage(event)">
+</div>
+
+<img id="preview">
+
+<p id="error" style="color:red;"></p>
+
+<select name="animal" required>
+<option value="">Select Animal</option>
+<option value="cow">🐄 Cow</option>
+<option value="buffalo">🐃 Buffalo</option>
+</select>
+
+<select name="breed" required>
+<option value="">Select Breed</option>
+<option value="local">Local</option>
+<option value="jersey">Jersey</option>
+<option value="murrah">Murrah</option>
+</select>
+
+<input type="number" name="age" placeholder="Age (optional)">
+
+<button type="submit">🔍 Analyze</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+function previewImage(event){
+    const file = event.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+        const img = document.getElementById("preview");
+        img.src = e.target.result;
+        img.style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function validateForm(){
+    let file = document.getElementById("file");
+
+    if(file.files.length === 0){
+        speak("Please upload an image before proceeding");
+        document.getElementById("error").innerHTML="Please upload an image";
+        return false;
+    }
+    return true;
+}
+
+// Voice functions
+function speak(text){
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.lang="en-IN";
+    window.speechSynthesis.speak(speech);
+}
+
+function welcomeVoice(){
+    speak("Welcome to Skin Risk Analyzer. Please upload an image to continue.");
+}
+</script>
+
+</body>
+</html>

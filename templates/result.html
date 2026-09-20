@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI';
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:white;
+    text-align:center;
+}
+
+.container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:40px;
+    margin-top:50px;
+}
+
+.card{
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
+    padding:25px;
+    border-radius:15px;
+    width:320px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
+    animation: fadeIn 1s ease;
+}
+
+img{
+    width:220px;
+    border-radius:12px;
+}
+
+button{
+    padding:10px;
+    margin-top:10px;
+    background:#00c853;
+    border:none;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+button:hover{
+    transform:scale(1.05);
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+}
+</style>
+
+</head>
+
+<body onload="autoSpeak()">
+
+<h2>🔍 Analysis Result</h2>
+
+<div class="container">
+
+<div class="card">
+<img src="{{ image_url }}">
+</div>
+
+<div class="card">
+
+<h3>Risk: {{ prediction | upper }}</h3>
+
+<p>{{ condition }}</p>
+
+<p><b>🧬 Condition:</b> {{ disease }}</p>
+
+<p><b>Confidence:</b> {{ confidence }}%</p>
+
+<p>{{ recommendation }}</p>
+
+<canvas id="chart"></canvas>
+
+<button onclick="autoSpeak()">🔊 Listen</button>
+<br>
+<a href="/"><button>🔁 Try Again</button></a>
+
+</div>
+
+</div>
+
+<script>
+let conf = {{ confidence }};
+let remain = 100 - conf;
+
+new Chart(document.getElementById("chart"),{
+    type:'doughnut',
+    data:{
+        labels:["Confidence","Remaining"],
+        datasets:[{
+            data:[conf,remain],
+            backgroundColor:["#00e676","#607d8b"]
+        }]
+    }
+});
+
+function autoSpeak(){
+    let text = "Risk level is {{ prediction }}. {{ recommendation }}";
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.lang="en-IN";
+    window.speechSynthesis.speak(speech);
+}
+</script>
+
+</body>
+</html>
